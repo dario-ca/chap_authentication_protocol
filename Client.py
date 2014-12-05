@@ -34,7 +34,7 @@ def handleChallenges(sock, password):
 
 # Handles the interaction with the user
 def talkToServer(sock):
-    print "Type to write to the server, write 'quit' to exit"
+    print "Type anything to write to the server, type 'quit' to exit"
     input = raw_input()
     while input != CLOSING_MESSAGE:
         sendMessage(sock, MessageType.MESSAGE, input)
@@ -70,7 +70,6 @@ def connect(password):
         sock.close()
     # If the password is correct
     elif type == MessageType.ACK:
-        print response
         thread.start_new_thread(handleChallenges, (sock, password, ))
         talkToServer(sock)
         sock.close()

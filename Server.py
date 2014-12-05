@@ -58,7 +58,8 @@ def monitorIncomingMessages(sock):
                 sendMessage(sock, MessageType.NACK, "Trying to Hack me ?")
                 break
             else:
-                sendMessage(sock, MessageType.ACK, "Challenge response approved")
+                print "Client challenge response approved"
+                sendMessage(sock, MessageType.ACK, '')
 
 
 def setConnection():
