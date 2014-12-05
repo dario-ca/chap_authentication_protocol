@@ -1,4 +1,5 @@
 __author__ = 'paolobruzzo'
+#comment by Dario to see if it works
 
 import socket
 import hashlib
