@@ -1,9 +1,6 @@
-__author__ = 'paolobruzzo'
-
 import socket
 import hashlib
 import getpass
-import ssl
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 8181
@@ -12,25 +9,25 @@ BUFFER_SIZE = 1024
 
 def connect(password):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    secure_sock = ssl.wrap_socket(sock, ca_certs='cert.pem', cert_reqs=ssl.CERT_REQUIRED, ssl_version=ssl.PROTOCOL_TLSv1)
+    #secure_sock = ssl.wrap_socket(sock, ca_certs='cert.pem', cert_reqs=ssl.CERT_REQUIRED, ssl_version=ssl.PROTOCOL_TLSv1)
 
     # Try to connect to the server
     try:
-        secure_sock.connect((TCP_IP, TCP_PORT))
+        sock.connect((TCP_IP, TCP_PORT))
     except socket.error:
         print "Connection Refused"
         return False
 
     # send password
-    secure_sock.send(password)
+    sock.send(password)
 
     # print all the challenges responses
-    message = secure_sock.recv(BUFFER_SIZE)
+    message = sock.recv(BUFFER_SIZE)
     while message:
         print "Server message: " + message
-        message = secure_sock.recv(BUFFER_SIZE)
+        message = sock.recv(BUFFER_SIZE)
 
-    secure_sock.close()
+    sock.close()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,4 @@
 import socket
-import ssl
 import random
 import time
 import string
@@ -38,23 +37,22 @@ def setConnection():
     sock, addr = s.accept()
 
     # Create a secure connection with SSL
-    secure_sock = ssl.wrap_socket(sock, server_side=True, certfile='cert.pem', keyfile='cert.pem',
-                                  ssl_version=ssl.PROTOCOL_TLSv1)
+    #secure_sock = ssl.wrap_socket(sock, server_side=True, certfile='cert.pem', keyfile='cert.pem', ssl_version=ssl.PROTOCOL_TLSv1)
 
     # Read password sent by the client
-    password = secure_sock.recv(BUFFER_SIZE)
+    password =sock.recv(BUFFER_SIZE)
 
     # Check it
     if password != hashlib.sha512(SECRET).hexdigest():
         print "Connection Refused"
-        secure_sock.send("Authentication Failed")
-        secure_sock.close()
+        sock.send("Authentication Failed")
+        sock.close()
         return False
 
     # Else
     print "Connection Accepted"
-    sendChallenges(secure_sock)
-    secure_sock.close()
+    sendChallenges(sock)
+    sock.close()
     return True
 
 
