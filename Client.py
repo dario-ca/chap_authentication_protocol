@@ -21,7 +21,15 @@ def connect(password):
         print "Connection Refused"
         return False
 
+    # send password
     secure_sock.send(password)
+
+    # print all the challenges responses
+    message = secure_sock.recv(BUFFER_SIZE)
+    while message:
+        print "Server message: " + message
+        message = secure_sock.recv(BUFFER_SIZE)
+
     secure_sock.close()
 
 
