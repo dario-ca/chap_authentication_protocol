@@ -3,11 +3,12 @@ import ssl
 import random
 import time
 import string
+import hashlib
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 8181
 BUFFER_SIZE = 1024
-SECRET_SHA512 = 'bd2b1aaf7ef4f09be9f52ce2d8d599674d81aa9d6a4421696dc4d93dd0619d682ce56b4d64a9ef097761ced99e0f67265b5f76085e5b0ee7ca4696b2ad6fe2b2'
+SECRET = 'secret'
 
 
 def getChallengeMessage(lenght=20, chars=string.ascii_letters + string.digits):
@@ -44,7 +45,7 @@ def setConnection():
     password = secure_sock.recv(BUFFER_SIZE)
 
     # Check it
-    if password != SECRET_SHA512:
+    if password != hashlib.sha512(SECRET).hexdigest():
         print "Connection Refused"
         secure_sock.send("Authentication Failed")
         secure_sock.close()
