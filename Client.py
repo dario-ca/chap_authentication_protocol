@@ -1,15 +1,55 @@
 import socket
 import hashlib
 import getpass
+import thread
+import os
+from Utils import *
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 8181
-BUFFER_SIZE = 1024
+LAST_CHALLENGE_RECEIVED = ''
 
 
+# to set the global variable
+def setLastChallenge(challenge):
+    global LAST_CHALLENGE_RECEIVED
+    LAST_CHALLENGE_RECEIVED = challenge
+
+
+# Handles the challenge messages
+def handleChallenges(sock, password):
+    while 1:
+        # Get the challenge
+        type, challenge = parseMessage(sock.recv(BUFFER_SIZE))
+        setLastChallenge(challenge)
+
+        # Hash the challenge and the password togheter
+        hashedChallenge = hashlib.sha512(challenge + password).hexdigest()
+
+        # Send it back
+        sendMessage(sock, MessageType.CHALLENGE, hashedChallenge)
+
+        # Receive back the response from the server (Accepted / Denied)
+        type, response = parseMessage(sock.recv(BUFFER_SIZE))
+        print response
+
+
+# Handles the interaction with the user
+def talkToServer(sock):
+    print "Type to write to the server, write 'quit' to exit"
+    input = raw_input()
+    while input != CLOSING_MESSAGE:
+        sendMessage(sock, MessageType.MESSAGE, input)
+        input = raw_input()
+
+    #Gets here when the user wants to close the connection
+    sendMessage(sock, MessageType.MESSAGE, CLOSING_MESSAGE)
+    sock.close()
+    os._exit(0)
+
+
+# Initiate the connection
 def connect(password):
+    passHash = hashlib.sha512(password).hexdigest()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #secure_sock = ssl.wrap_socket(sock, ca_certs='cert.pem', cert_reqs=ssl.CERT_REQUIRED, ssl_version=ssl.PROTOCOL_TLSv1)
 
     # Try to connect to the server
     try:
@@ -18,19 +58,24 @@ def connect(password):
         print "Connection Refused"
         return False
 
-    # send password
-    sock.send(password)
+    # send hashed password
+    sock.send(passHash)
 
-    # print all the challenges responses
-    message = sock.recv(BUFFER_SIZE)
-    while message:
-        print "Server message: " + message
-        message = sock.recv(BUFFER_SIZE)
+    # Wait for the server response
+    type, response = parseMessage(sock.recv(BUFFER_SIZE))
 
-    sock.close()
+    # If the password is wrong
+    if type == MessageType.NACK:
+        print response
+        sock.close()
+    # If the password is correct
+    elif type == MessageType.ACK:
+        print response
+        thread.start_new_thread(handleChallenges, (sock, password, ))
+        talkToServer(sock)
+        sock.close()
 
 
 if __name__ == '__main__':
-    passPlain = getpass.getpass(prompt="Enter Password: ")
-    passHash = hashlib.sha512(passPlain).hexdigest()
-    connect(passHash)
+    password = getpass.getpass(prompt="Enter Password: ")
+    connect(password)

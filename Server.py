@@ -3,30 +3,62 @@ import random
 import time
 import string
 import hashlib
+import thread
+from Utils import *
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 8181
-BUFFER_SIZE = 1024
 SECRET = 'secret'
+LAST_CHALLENGE_SENT = ''
 
+# to set the global variable
+def setLastChallenge(challenge):
+    global LAST_CHALLENGE_SENT
+    LAST_CHALLENGE_SENT = challenge
 
-def getChallengeMessage(lenght=20, chars=string.ascii_letters + string.digits):
+# creates a new challenge of letters and numbers
+def createChallenge(lenght=20, chars=string.ascii_letters + string.digits):
     # generate a sequence of characters taken from the specified characters
     return ''.join(random.choice(chars) for _ in range(lenght))
 
-
-def getRandomMillSec():
-    from_sec = 5
-    to_sec = 15
+# Returns a random number withing a given interval
+def getRandomSec(from_sec, to_sec):
     # init seed with the current time in milliseconds
     random.seed(int(round(time.time() * 1000)))
-    return random.uniform(from_sec, to_sec) * 1000
+    return random.uniform(from_sec, to_sec)
 
-# sends a challenge every 2 seconds
-def sendChallenges(sock):
-    for _ in range(0,5):
-        sock.send(getChallengeMessage())
-        time.sleep(2)
+# To check if the user wants to exit
+def isClosingMessage(message):
+    return message == CLOSING_MESSAGE
+
+# This runs on a separate thread, and sends every N seconds
+# a challenge to the client
+def startChallenges(sock):
+    while 1:
+        challenge = createChallenge()
+        sendMessage(sock, MessageType.CHALLENGE, challenge)
+        setLastChallenge(challenge)
+        time.sleep(getRandomSec(5, 15))
+
+# To check if the client response is OK
+def isChallegeCorrect(clientResponse):
+    return clientResponse == hashlib.sha512(LAST_CHALLENGE_SENT + SECRET).hexdigest()
+
+# This runs on the main thread and listen to the client sock.send
+def monitorIncomingMessages(sock):
+    while 1:
+        type, incoming = parseMessage(sock.recv(BUFFER_SIZE))
+        # If i received a normal user message
+        if type == MessageType.MESSAGE:
+            if isClosingMessage(incoming):
+                break
+            else:
+                print "Client said: " + incoming
+        # if is a challenge packet response
+        elif type == MessageType.CHALLENGE:
+            if not isChallegeCorrect(incoming):
+                sendMessage(sock, MessageType.NACK, "Trying to Hack me ?")
+                break
+            else:
+                sendMessage(sock, MessageType.ACK, "Challenge response approved")
 
 
 def setConnection():
@@ -36,22 +68,30 @@ def setConnection():
 
     sock, addr = s.accept()
 
-    # Create a secure connection with SSL
-    #secure_sock = ssl.wrap_socket(sock, server_side=True, certfile='cert.pem', keyfile='cert.pem', ssl_version=ssl.PROTOCOL_TLSv1)
-
     # Read password sent by the client
-    password =sock.recv(BUFFER_SIZE)
+    password = sock.recv(BUFFER_SIZE)
 
-    # Check it
+    # If the password doesn't match, close immediately
     if password != hashlib.sha512(SECRET).hexdigest():
         print "Connection Refused"
-        sock.send("Authentication Failed")
+        sendMessage(sock, MessageType.NACK, "Wrong password")
         sock.close()
         return False
 
     # Else
     print "Connection Accepted"
-    sendChallenges(sock)
+    sendMessage(sock, MessageType.ACK, "Password Correct")
+
+    # Launch the handler of the challenges in a new thread
+    # so that it does not interfere with the sock.recv on
+    # the main thread
+    thread.start_new_thread(startChallenges, (sock, ))
+
+    # Launch the sock.recv on the main thread
+    monitorIncomingMessages(sock)
+
+    # You get here when the user enters the closing message,
+    # or when the challenge message is incorrect
     sock.close()
     return True
 
