@@ -4,6 +4,7 @@ import time
 import string
 import hashlib
 import thread
+import datetime
 from Utils import *
 
 SECRET = 'secret'
@@ -15,7 +16,7 @@ def setLastChallenge(challenge):
     LAST_CHALLENGE_SENT = challenge
 
 # creates a new challenge of letters and numbers
-def createChallenge(lenght=20, chars=string.ascii_letters + string.digits):
+def createChallenge(lenght=30, chars=string.ascii_letters + string.digits):
     # generate a sequence of characters taken from the specified characters
     return ''.join(random.choice(chars) for _ in range(lenght))
 
@@ -36,7 +37,7 @@ def startChallenges(sock):
         challenge = createChallenge()
         sendMessage(sock, MessageType.CHALLENGE, challenge)
         setLastChallenge(challenge)
-        time.sleep(getRandomSec(5, 15))
+        time.sleep(getRandomSec(10, 20))
 
 # To check if the client response is OK
 def isChallegeCorrect(clientResponse):
@@ -59,7 +60,8 @@ def monitorIncomingMessages(sock):
                 break
             else:
                 print "Client challenge response approved"
-                sendMessage(sock, MessageType.ACK, '')
+                now = datetime.datetime.now().strftime("%H:%M:%S")
+                sendMessage(sock, MessageType.ACK, 'Your authentication has been approved at ' + now)
 
 
 def setConnection():
