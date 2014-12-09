@@ -1,3 +1,5 @@
+import hashlib
+
 TCP_IP = '127.0.0.1'
 TCP_PORT = 8181
 BUFFER_SIZE = 1024
@@ -12,6 +14,9 @@ class MessageType:
 
 def sendMessage(sock, messType, message):
     sock.send(messType + message)
+
+def encode(message):
+       return hashlib.sha512(message).hexdigest()
 
 def parseMessage(text):
     if text[0: len(MessageType.CHALLENGE)] == MessageType.CHALLENGE:

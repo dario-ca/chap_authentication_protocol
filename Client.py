@@ -1,5 +1,4 @@
 import socket
-import hashlib
 import getpass
 import thread
 import os
@@ -22,7 +21,7 @@ def handleChallenges(sock, password):
         setLastChallenge(challenge)
 
         # Hash the challenge and the password together
-        hashedChallenge = hashlib.sha512(challenge + password).hexdigest()
+        hashedChallenge = encode(challenge + password)
 
         # Send it back
         sendMessage(sock, MessageType.CHALLENGE, hashedChallenge)
@@ -48,7 +47,7 @@ def talkToServer(sock):
 
 # Initiate the connection
 def connect(password):
-    passHash = hashlib.sha512(password).hexdigest()
+    passHash = encode(password)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Try to connect to the server

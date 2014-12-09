@@ -2,7 +2,6 @@ import socket
 import random
 import time
 import string
-import hashlib
 import thread
 import datetime
 from Utils import *
@@ -41,7 +40,7 @@ def startChallenges(sock):
 
 # To check if the client response is OK
 def isChallegeCorrect(clientResponse):
-    return clientResponse == hashlib.sha512(LAST_CHALLENGE_SENT + SECRET).hexdigest()
+    return clientResponse == encode(LAST_CHALLENGE_SENT + SECRET)
 
 # This runs on the main thread and listen to the client sock.send
 def monitorIncomingMessages(sock):
@@ -76,7 +75,7 @@ def setConnection():
     password = sock.recv(BUFFER_SIZE)
 
     # If the password doesn't match, close immediately
-    if password != hashlib.sha512(SECRET).hexdigest():
+    if password != encode(SECRET):
         print "Connection Refused"
         sendMessage(sock, MessageType.NACK, "Wrong password")
         sock.close()
