@@ -1,0 +1,31 @@
+Challenge-Handshake Authentication Protocol (CHAP) RFC 1994
+
+-authenticates a user or network host to an authenticating entity
+-protection against replay attacks
+-use of an incrementally changing identifier and of a variable challenge-value
+-both the client and server know the plaintext of the secret, although it is never sent over the network
+-provides better security as compared to Password Authentication Protocol (PAP)
+-scheme used by Point to Point Protocol (PPP) servers to validate the identity of remote clients
+-periodically verifies the identity of the client by using a three-way handshake
+-verification is based on a shared secret
+1_After the completion of the link establishment phase, the authenticator sends a "challenge" message to the peer
+2_The peer responds with a value calculated using a one-way hash function on the challenge and the secret combined
+3_The authenticator checks the response against its own calculation of the expected hash value. If the values matches, the authenticator acknowledges the authentication; otherwise it should terminate the connection
+4_At random intervals the authenticator sends a new challenge to the peer and repeats steps 1 through 3
+
+IMPLEMENTATION:
+-server+client
+-client:
+	-connects to server
+	-separate thread handles CHAP:
+		-save last challenge received
+		-append secret to last challenge and hash them together
+		-send to server
+	-main thread send input to server
+-server:
+	-sets up port for connection
+	-new thread handles CHAP:
+		-just sends challenges periodically
+	-main thread receives messages from client
+		-if it is a message: prints
+		-if it is a challenge: checks it 

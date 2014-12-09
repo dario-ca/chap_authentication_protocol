@@ -21,7 +21,7 @@ def handleChallenges(sock, password):
         type, challenge = parseMessage(sock.recv(BUFFER_SIZE))
         setLastChallenge(challenge)
 
-        # Hash the challenge and the password togheter
+        # Hash the challenge and the password together
         hashedChallenge = hashlib.sha512(challenge + password).hexdigest()
 
         # Send it back
