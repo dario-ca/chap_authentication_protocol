@@ -126,7 +126,7 @@ through the exchange of a common secret. That is the core principle
 of a standard password authentication protocol. This type of protocol
 is vulnerable to the replay attack in which a valid data transmission
 is maliciously repeated. For instance, by eavesdropping the password
-(or the hash of it) an attacker can impersonate a real user and authenticate
+(or the hash of it, which is more likely to be transmitted) an attacker can impersonate a real user and authenticate
 to the server which, from that moment on, will trust the attacker
 as the impersonated valid user. The Challenge-Handshake Authentication
 Protocol (CHAP) provides protection against those attacks: it is used
@@ -163,8 +163,8 @@ protocol.
 
 \begin{Figure}
 	\centering
-	\includegraphics[width=\linewidth]{Images/Init.png}
-	\captionof{figure}{The first phase of CHAP}
+	\includegraphics[width=\linewidth]{Images/Loop.png}
+	\captionof{figure}{The phases of CHAP}
 \end{Figure}
 
 
@@ -218,7 +218,7 @@ keyword that is recognized by the server.
 
 \begin{Figure}
 	\centering
-	\includegraphics[width=\linewidth]{Images/Loop.png}
+	\includegraphics[width=\linewidth]{Images/Implementation.png}
 	\captionof{figure}{The logic of the protocol}
 \end{Figure}
 
@@ -275,7 +275,7 @@ is encoded and not understandable.
 \textcolor{red}{FIGURA WIRESHARK??}
 
 
-\section{The protection}
+\section{Conclusions}
 
 \end{multicols}
 \end{document}
