@@ -55,6 +55,7 @@ def monitorIncomingMessages(sock):
         # if is a challenge packet response
         elif type == MessageType.CHALLENGE:
             if not isChallegeCorrect(incoming):
+                print "Client may have been hacked"
                 sendMessage(sock, MessageType.NACK, "Trying to Hack me ?")
                 break
             else:

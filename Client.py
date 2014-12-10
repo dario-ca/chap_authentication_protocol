@@ -18,7 +18,6 @@ def handleChallenges(sock, password):
     while 1:
         # Get the challenge
         type, challenge = parseMessage(sock.recv(BUFFER_SIZE))
-        setLastChallenge(challenge)
 
         # Hash the challenge and the password together
         hashedChallenge = encode(challenge + password)
@@ -26,9 +25,16 @@ def handleChallenges(sock, password):
         # Send it back
         sendMessage(sock, MessageType.CHALLENGE, hashedChallenge)
 
+        # Remember it
+        setLastChallenge(challenge)
+
         # Receive back the response from the server (Accepted / Denied)
         type, response = parseMessage(sock.recv(BUFFER_SIZE))
         print response
+
+        if type != MessageType.ACK:
+            sock.close()
+            os._exit(0)
 
 
 # Handles the interaction with the user
