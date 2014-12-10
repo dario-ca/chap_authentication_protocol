@@ -90,7 +90,7 @@
 \author{
 \large
 \textsc{Bruzzo Paolo, Casula Dario}\\[2mm] % Your name
-\normalsize University of Ilinois at Chicago \\ % Your institution
+\normalsize University of Illinois at Chicago \\ % Your institution
 \normalsize \href{}{\{pbruzz2,dcasul3\}@uic.edu} % Your email address
 \vspace{-5mm}
 }
@@ -108,7 +108,7 @@
 \thispagestyle{fancy} 
 \begin{abstract}
 \noindent This document describes how to implement a secure and continuous
-host authentication in a client-server architecture (also extendible
+host authentication in a client-server architecture (also extensible
 to a host to host authentication), through the periodic exchange of
 unique and non-predictable challenges (or tokens). The Point-to-Point
 Challenges Handshake Protocol (CHAP) provides protection against Replay
@@ -122,7 +122,7 @@ made using Python programming language.
 
 Authentication is a procedure that confirms the truth of an entity which intends
 to perform a given operation. Usually authentication is performed
-through the exchange of a common secret. That is the core principle
+through the exchange of a common secret. That is the main core
 of a standard password authentication protocol. This type of protocol
 is vulnerable to the replay attack in which a valid data transmission
 is maliciously repeated. For instance, by eavesdropping the password
@@ -144,7 +144,7 @@ authentication protocol (CHAP). It is used to periodically verify
 the identity of a user with a 3-way handshake. Each handshake uses
 a unique challenge (session token) to authenticate the host. The answer
 of the host is an hashed combination of the challenge received and
-a secret, both the authenticator and host know the plaintext of the
+a secret, both the authenticator and host know the plain-text of the
 secret. The protocol provides authentication after the link has been
 already established. The authenticator starts to send a random-generated
 challenge message to the host which appends the secret to the token
@@ -192,7 +192,7 @@ to the host.
 
 \section{The Implementation}
 
-A client-serverconfiguration has been implemented using Python programming language.
+A client-server configuration has been implemented using Python programming language.
 The server is the authenticator in the CHAP protocol, while the client
 is the host that has to authenticate to the server. Both the server
 and the client has been implemented. The server sets up the connection
@@ -200,12 +200,12 @@ and listen to a port that will be used by the client for the authentication.
 Since the protocol implemented provides protections once the link
 has been already established, the server requires the client to insert
 a secret that will be sent after an encoding with SHA2. If the hash
-of the secret matches against the has computed by the server, the
-connection is established. The CHAP protocol implement a continuous
-authentication; cyclically, the server send a random-generated challenge
-to the client, the client append the secret and compute the hash of
+of the secret matches against the hash computed by the server, the
+connection is established. The CHAP protocol implements a continuous
+authentication; cyclically, the server sends a random-generated challenge
+to the client, the client appends the secret and computes the hash of
 the whole message. This message is sent back to the server that checks
-it and keep the connection open if the two messages match. The client
+it and keeps the connection open if the two messages match. The client
 and the server start a parallel thread to handle the CHAP steps: the
 server second thread sends the challenges while the client second
 thread appends the secret at each handshake, encodes the message and
@@ -235,9 +235,9 @@ it in the communication with the server. The CHAP protocol avoids
 this kind of attack, since it is not possible to retrieve the secret.
 The message sent by the client is not the hash of the password, but
 the hash of a combination between the password and a one-time random
-generated token. The plaintext of the secret is known only by the
+generated token. The plain-text of the secret is known only by the
 valid client and the server. In figure 3 we can analyze how
-a eavesdropping attack is avoided by the CHAP protocol.
+an eavesdropping attack is avoided by the CHAP protocol.
 
 \begin{Figure}
 	\centering
@@ -250,7 +250,7 @@ successfully intercepted by Eve, who wants to impersonate the client.
 The protocol implemented avoid the attack because Eve cannot reply
 successfully to the request of a challenge sent by the server: the
 correct answer is the hash of a combination of the challenge sent
-and the plain text of the password, that never is sent on the network.
+and the plain-text of the password that never is sent on the network.
 The attacker cannot in this way act on behalf of the client.
 
 A second example of a possible eavesdropping attack is reported in
@@ -266,11 +266,11 @@ secret of the user.
 	\captionof{figure}{Eavesdrop second attack}
 \end{Figure}
 
-Another importan protection provided by CHAP is that it is possible
+Another important protection provided by CHAP is that it is possible
 to authenticate a client also in non-encrypted channels, since all
-the messages are encoded with an hash function. In the figures belowe
+the messages are encoded with a hash function. In the figures below
 we can see how each important message passing through the network
-is encoded and not understandable. In red is underlined the secret sent by the client to establish the initial connection, it is hashed and it is not possible to retrieve the plaintext of the secret necessary to succeed in the handshake. The challenge handshake is underlined in green, as already said, it is completely hashed and it is not possible to distinguish the challenge from the password appended. An example of plaintext is underlined in black: it is simply a non-important message exchange between the client and the server, that message cannot be used to retrieve any type of useful credential. At the end, in blue, is underlined the closure of the connection through the keyword "quit".
+is encoded and not understandable. In red is underlined the secret sent by the client to establish the initial connection, it is hashed and it is not possible to retrieve the plain-text of the secret necessary to succeed in the handshake. The challenge handshake is underlined in green: as already said, it is completely hashed and it is not possible to distinguish the challenge from the password appended. An example of plain-text is underlined in black: it is simply a non-important message exchange between the client and the server, that message cannot be used to retrieve any type of useful credential. At the end, in blue, is underlined the closure of the connection through the keyword "quit".
 
 \begin{Figure}
 	\centering
@@ -279,7 +279,7 @@ is encoded and not understandable. In red is underlined the secret sent by the c
 \end{Figure}
 
 \section{Disadvantages}
-The only disadvantage that can be pointed out is that both the ends of the connection have to know the plaintext of the secret. This could be an issue in case of very large installations, since all the secrets of each host have to be mantained in all the ends of the network. This is a problem both in terms of size of the storage and because the secret is shared among too many entities. However, we have to notice that the plaintext is never sent through the network, but is already known and stored in the server.
+The only disadvantage that can be pointed out is that both the ends of the connection have to know the plain-text of the secret. This could be an issue in case of very large installations, since all the secrets of each host have to be maintained in all the ends of the network. This is a problem both in terms of size of the storage and because the secret is shared among too many entities. However, we have to notice that the plain-text is never sent through the network, but is already known and stored in the server.
 
 \end{multicols}
 \end{document}
