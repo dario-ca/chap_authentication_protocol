@@ -268,11 +268,18 @@ secret of the user.
 
 Another importan protection provided by CHAP is that it is possible
 to authenticate a client also in non-encrypted channels, since all
-the messages are encoded with an hash function. In figure 5 we provide a packet sniffing on the challenge messages performed with Wireshark, and we can see how each important message passing through the network is encoded and not understandable.
+the messages are encoded with an hash function. In the figures belowe
+we can see how each important message passing through the network
+is encoded and not understandable. In red is underlined the secret sent by the client to establish the initial connection, it is hashed and it is not possible to retrieve the plaintext of the secret necessary to succeed in the handshake. The challenge handshake is underlined in green, as already said, it is completely hashed and it is not possible to distinguish the challenge from the password appended. An example of plaintext is underlined in black: it is simply a non-important message exchange between the client and the server, that message cannot be used to retrieve any type of useful credential. At the end, in blue, is underlined the closure of the connection through the keyword "quit".
 
-\textcolor{red}{FIGURA WIRESHARK??}
+\begin{Figure}
+	\centering
+	\includegraphics[width=\linewidth]{Images/Wireshark.png}
+	\captionof{figure}{Wireshark TCP Stream}
+\end{Figure}
 
-\section{Conclusions}
+\section{Disadvantages}
+The only disadvantage that can be pointed out is that both the ends of the connection have to know the plaintext of the secret. This could be an issue in case of very large installations, since all the secrets of each host have to be mantained in all the ends of the network. This is a problem both in terms of size of the storage and because the secret is shared among too many entities. However, we have to notice that the plaintext is never sent through the network, but is already known and stored in the server.
 
 \end{multicols}
 \end{document}
