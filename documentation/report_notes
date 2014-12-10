@@ -29,3 +29,6 @@ IMPLEMENTATION:
 	-main thread receives messages from client
 		-if it is a message: prints
 		-if it is a challenge: checks it 
+
+
+			

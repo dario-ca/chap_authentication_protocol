@@ -186,7 +186,7 @@ This document describes how to implement a secure and continuous host authentica
 tion in a client-server architecture (also extendible to a host to host
  authentication), through the periodic exchange of unique and non-predictable
  challenges (or tokens).
- The Point-to-Point Challenges Handshake Protocol (CHAP) provides protection
+ This Point-to-Point Challenges Handshake Protocol (CHAP) provides protection
  against Replay Attacks.
  The implementations of the client and the server have been made using Python
  programming language.
@@ -272,22 +272,19 @@ status open
 
 \end_inset
 
-authentication is a procedure that confirms the truth of an entity which
+uthentication is a procedure that confirms the truth of an entity which
  intends to perform a given operation.
  Usually authentication is performed through the exchange of a common secret.
  That is the core principle of a standard password authentication protocol.
  This type of protocol is vulnerable to the replay attack in which a valid
- data transmission is maliciously repeated.
- For instance, by eavesdropping the password (or the hash of it) an attacker
- can impersonate a real user and authenticate to the server which, from
- that moment on, will trust the attacker as the impersonated valid user.
+ data transmission is maliciously repeated: for instance, by eavesdropping
+ the password (or the hash of it) an attacker can impersonate a real user
+ and authenticate to the server which, from that moment on, will trust the
+ attacker as the impersonated valid user.
  The Challenge-Handshake Authentication Protocol (CHAP) provides protection
  against those attacks: it is used to periodically verify the identity of
- a user through a 3-way handshake, exchanging unique non-predictable session
+ a user using a 3-way handshake, exchanging unique non-predictable session
  tokens.
- Even though the authentication is only one-way, by implementing CHAP in
- both directions it is possible a mutual authentication of the client on
- the server and the server on the client.
 \end_layout
 
 \begin_layout Section
@@ -344,10 +341,10 @@ d.
  hash function of the whole string.
  The host sends this new message to the authenticator that checks this response
  against its own computation of the expected hash value.
- If the two values match, the authentication succeeds, otherwise the connection
+ If the two values match the authentication succeeds, otherwise the connection
  is closed.
  The whole procedure, of sending a challenge, replying with the hash and
- checking the response, is performed periodically in order to keep authenticated
+ checking the response, is performed periodically in order to keep authenticate
  the identity of the host, throughout the entire session of the connection.
  At every cycle of execution of the algorithm, a new different challenge
  is generated, in this way, all the previous responses of the host are no
@@ -362,7 +359,7 @@ FIGURA DELL'INIT
 \end_layout
 
 \begin_layout Standard
-Here is a fast and clear summary of the steps:
+Here we summarize the steps implemented by the protocol:
 \end_layout
 
 \begin_layout Standard
@@ -554,7 +551,7 @@ status open
 \begin_layout Standard
 
 \color red
-DECIDER CHE FIGURE METTERE MAGARI DEGLI SCREENSHOTS
+DECIDERE CHE FIGURE METTERE MAGARI DEGLI SCREENSHOTS
 \end_layout
 
 \begin_layout Section
@@ -571,12 +568,11 @@ The Challenge-Handshake Authentication Protocol (CHAP) provides protection
  the hash sent), he/she is able to impersonate the valid user and substitute
  it in the communication with the server.
  The CHAP protocol avoids this kind of attack, since it is not possible
- to retrieve the secret.
- The message sent by the client is not the hash of the password, but the
- hash of a combination between the password and a one-time random generated
- token.
+ to retrieve the secret, indeed, the message sent by the client is not the
+ hash of the password, but the hash of a combination between the password
+ and a one-time random generated token.
  The plaintext of the secret is known only by the valid client and the server.
- In the figure below we can analyze how a eavesdropping attack is avoided
+ In the figure below we can anlyze how a eavesdropping attack is avoided
  by the CHAP protocol.
 \end_layout
 
@@ -609,30 +605,13 @@ FIGURA EAVESDROPPING 2
 \end_layout
 
 \begin_layout Standard
-In the figure, Eve successfully eavesdropped the answer the client gives
+In the figure, Eve succesfully eavesdropped the answer the client gives
  to a challenge.
  Also in this second example, Eve cannot reply to the next challenge, since
  the next token is new and random-generated.
  Again, the attack is prevented because there is no way to know the secret
  of the user.
-\end_layout
-
-\begin_layout Standard
-Another importan protection provided by CHAP is that it is possible to authentic
-ate a client also in non-encrypted channels, since all the messages are
- encoded with an hash function.
- In the figures belowe we can see how each important message passing through
- the network is encoded and not understandable.
-\end_layout
-
-\begin_layout Standard
-
-\color red
-FIGURA WIRESHARK??
-\end_layout
-
-\begin_layout Section
-The protection
+ When a token changes over time into an always new one, it 
 \end_layout
 
 \begin_layout Standard
