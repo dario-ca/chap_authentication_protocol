@@ -7,7 +7,7 @@
 \renewcommand{\ttdefault}{mathpazo}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
-\usepackage{geometry}
+\usepackage[margin={3.5cm,3.5cm}]{geometry}
 \geometry{verbose,columnsep=20pt}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -17,6 +17,10 @@
  breaklinks=false,pdfborder={0 0 1},backref=section,colorlinks=false]
  {hyperref}
 \usepackage{breakurl}
+\usepackage[pdftex]{graphicx}	
+\newenvironment{Figure}
+  {\par\medskip\noindent\minipage{\linewidth}}
+  {\endminipage\par\medskip}
 
 \makeatletter
 \@ifundefined{date}{}{\date{}}
@@ -47,7 +51,7 @@
 
 % Use the Palatino font
 % Use 8-bit encoding that has 256 glyphs
-\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\linespread{1.10} % Line spacing - Palatino needs more space between lines
 \usepackage{microtype}% Slightly tweak font spacing for aesthetics
 
 % Document margins
@@ -81,7 +85,7 @@
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
 
-\title{\vspace{5mm}\fontsize{24pt}{10pt}\selectfont\textbf{decidere titolo}} % Article title
+\title{\vspace{5mm}\fontsize{24pt}{10pt}\selectfont\textbf{Challenge Authentication Protocol}} % Article title
 
 \author{
 \large
@@ -116,8 +120,7 @@ made using Python programming language.
 
 \section{Introduction}
 
-\lettrine{\inputencoding{latin1}{A}\inputencoding{latin9}}authentication
-is a procedure that confirms the truth of an entity which intends
+Authentication is a procedure that confirms the truth of an entity which intends
 to perform a given operation. Usually authentication is performed
 through the exchange of a common secret. That is the core principle
 of a standard password authentication protocol. This type of protocol
@@ -136,7 +139,7 @@ and the server on the client.
 
 \section{The Protocol}
 
-\lettrine{T}he protocol is a Point-to-Point Challenge-Handshake
+The protocol is a Point-to-Point Challenge-Handshake
 authentication protocol (CHAP). It is used to periodically verify
 the identity of a user with a 3-way handshake. Each handshake uses
 a unique challenge (session token) to authenticate the host. The answer
@@ -158,7 +161,12 @@ responses of the host are no more valid, since the final hash calculated
 will be different. In the figure below you can see the steps of the
 protocol.
 
-\textcolor{red}{FIGURA DELL'INIT}
+\begin{Figure}
+	\centering
+	\includegraphics[width=\linewidth]{Images/Init.png}
+	\captionof{figure}{The first phase of CHAP}
+\end{Figure}
+
 
 Here is a fast and clear summary of the steps:
 
@@ -184,8 +192,7 @@ to the host.
 
 \section{The Implementation}
 
-\lettrine{\inputencoding{latin1}{A}\inputencoding{latin9}} client-server
-configuration has been implemented using Python programming language.
+A client-serverconfiguration has been implemented using Python programming language.
 The server is the authenticator in the CHAP protocol, while the client
 is the host that has to authenticate to the server. Both the server
 and the client has been implemented. The server sets up the connection
@@ -209,7 +216,11 @@ randomly in a range from 10 to 20 seconds. The client has in every
 moment the possibility to close the connection sending a predefined
 keyword that is recognized by the server.
 
-\textcolor{red}{DECIDER CHE FIGURE METTERE MAGARI DEGLI SCREENSHOTS}
+\begin{Figure}
+	\centering
+	\includegraphics[width=\linewidth]{Images/Loop.png}
+	\captionof{figure}{The logic of the protocol}
+\end{Figure}
 
 
 \section{The protection}
@@ -225,10 +236,14 @@ this kind of attack, since it is not possible to retrieve the secret.
 The message sent by the client is not the hash of the password, but
 the hash of a combination between the password and a one-time random
 generated token. The plaintext of the secret is known only by the
-valid client and the server. In the figure below we can analyze how
+valid client and the server. In figure 3 we can analyze how
 a eavesdropping attack is avoided by the CHAP protocol.
 
-\textcolor{red}{FIGURA EAVESDROPPING 1}
+\begin{Figure}
+	\centering
+	\includegraphics[width=\linewidth]{Images/SniffPassword.png}
+	\captionof{figure}{Eavesdrop first attack}
+\end{Figure}
 
 The client sends to the server the hash of the secret. This hash is
 successfully intercepted by Eve, who wants to impersonate the client.
@@ -239,15 +254,17 @@ and the plain text of the password, that never is sent on the network.
 The attacker cannot in this way act on behalf of the client.
 
 A second example of a possible eavesdropping attack is reported in
-the next figure.
-
-\textcolor{red}{FIGURA EAVESDROPPING 2}
-
-In the figure, Eve successfully eavesdropped the answer the client
+figure 4, where Eve successfully eavesdropped the answer the client
 gives to a challenge. Also in this second example, Eve cannot reply
 to the next challenge, since the next token is new and random-generated.
 Again, the attack is prevented because there is no way to know the
 secret of the user.
+
+\begin{Figure}
+	\centering
+	\includegraphics[width=\linewidth]{Images/SniffChallenge.png}
+	\captionof{figure}{Eavesdrop second attack}
+\end{Figure}
 
 Another importan protection provided by CHAP is that it is possible
 to authenticate a client also in non-encrypted channels, since all
