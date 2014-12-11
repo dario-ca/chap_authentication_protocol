@@ -15,7 +15,9 @@ def setLastChallenge(challenge):
     LAST_CHALLENGE_SENT = challenge
 
 # creates a new challenge of letters and numbers
-def createChallenge(lenght=30, chars=string.ascii_letters + string.digits):
+def createChallenge(lenght=40, chars=string.ascii_letters + string.digits):
+    # init seed with the current time in milliseconds
+    random.seed(int(round(time.time() * 1000)))
     # generate a sequence of characters taken from the specified characters
     return ''.join(random.choice(chars) for _ in range(lenght))
 
